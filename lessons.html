@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Lesson</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .lesson-page {
+            width: 95%;
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 24px;
+            box-sizing: border-box;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .lesson-section {
+            padding: 18px;
+            margin: 16px 0;
+            border: 1px solid #d9e2ec;
+            border-radius: 10px;
+        }
+
+        .video-link, .quiz-button, .action-button {
+            display: inline-block;
+            padding: 11px 18px;
+            background: #1769aa;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px 4px 5px 0;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .answer-option {
+            display: block;
+            margin: 10px 0;
+        }
+
+        .progress-container {
+            background: #ffffff;
+            padding: 18px;
+            margin: 20px 0;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg,#2563eb,#22c55e);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        #lessonCount {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+<div class="lesson-page">
+
+    <a id="backLink" href="index.html">← Back to Home</a>
+
+    <h1 id="lessonTitle">Course Lesson</h1>
+    <p id="lessonDescription"></p>
+
+    <div class="progress-container">
+        <div class="progress-info">
+            <span>Course Progress</span>
+            <span id="progressText">0% Complete</span>
+        </div>
+
+        <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+        </div>
+
+        <p id="lessonCount">0 of 6 lessons completed</p>
+    </div>
+
+    <div class="lesson-section">
+        <h2>Lesson Video</h2>
+        <p>Watch the tutorial for this lesson.</p>
+        <a id="videoLink" class="video-link"
+           href="#" target="_blank" rel="noopener noreferrer">
+            ▶ Watch Video
+        </a>
+    </div>
+
+    <div class="lesson-section">
+        <h2>Lesson Notes</h2>
+        <p id="lessonNotes"></p>
+    </div>
+
+    <div class="lesson-section">
+        <h2>Quiz</h2>
+        <p id="question"></p>
+        <div id="options"></div>
+
+        <button id="quizButton" class="quiz-button"
+                onclick="checkAnswer()">
+            Submit Answer
+        </button>
+
+        <p id="quizResult" aria-live="polite"></p>
+    </div>
+
+    <button id="completeButton" class="quiz-button"
+            onclick="markComplete()" disabled>
+        Mark as Complete
+    </button>
+
+    <button id="nextLessonBtn" class="action-button"
+            onclick="goToNextLesson()" style="display:none">
+        Next Lesson →
+    </button>
+
+    <button id="certificateBtn" class="action-button"
+            onclick="goToCertificate()" style="display:none">
+        Get Certificate 🎓
+    </button>
+
+    <p id="completionMessage" aria-live="polite"></p>
+</div>
+
+<script>
+"use strict";
+
+const params = new URLSearchParams(window.location.search);
+const courseKey = params.get("course");
+const lessonIndex = Number(params.get("lesson"));
+
+const courseData = {
+    web: {
+        title: "Web Development",
+        lessons: [
+            "HTML - Introduction and Basic Tags",
+            "HTML - Forms and Tables",
+            "CSS - Colors, Fonts and Styling",
+            "CSS - Layout and Responsive Design",
+            "JavaScript - Variables and Data Types",
+            "JavaScript - Functions and Events"
+        ]
+    },
+    python: {
+        title: "Python Programming",
+        lessons: [
+            "Introduction to Python",
+            "Variables and Data Types",
+            "Conditional Statements",
+            "Loops",
+            "Functions",
+            "Mini Project"
+        ]
+    },
+    database: {
+        title: "Database Management",
+        lessons: [
+            "Introduction to Databases",
+            "Database Tables and Relationships",
+            "SQL SELECT, INSERT, UPDATE and DELETE",
+            "SQL WHERE and ORDER BY",
+            "Primary Key and Foreign Key",
+            "Mini Project using MySQL"
+        ]
+    }
+};
+
+const quizData = {
+    web: [
+        {q:"Which language structures a web page?",o:["HTML","CSS","SQL","Python"],a:0},
+        {q:"Which tag creates a paragraph?",o:["<h1>","<p>","<br>","<img>"],a:1},
+        {q:"Which tag creates a hyperlink?",o:["<a>","<p>","<div>","<table>"],a:0},
+        {q:"Which language styles a web page?",o:["SQL","Python","CSS","Java"],a:2},
+        {q:"Which tag displays an image?",o:["<image>","<pic>","<img>","<src>"],a:2},
+        {q:"Which tag creates a table row?",o:["<td>","<tr>","<th>","<table>"],a:1},
+        {q:"Which language adds interactivity?",o:["HTML","CSS","SQL","JavaScript"],a:3},
+        {q:"Which symbol starts an HTML closing tag?",o:["#","/","*","&"],a:1},
+        {q:"Which CSS property changes text colour?",o:["font-size","color","margin","padding"],a:1},
+        {q:"Which tag creates a form?",o:["<form>","<inputbox>","<data>","<section>"],a:0}
+    ],
+    python: [
+        {q:"Which keyword defines a function?",o:["function","def","fun","define"],a:1},
+        {q:"Which symbol starts a comment?",o:["//","/*","#","--"],a:2},
+        {q:"Which type stores whole numbers?",o:["str","int","list","bool"],a:1},
+        {q:"Which keyword checks a condition?",o:["if","print","def","import"],a:0},
+        {q:"Which function displays output?",o:["input()","show()","print()","display()"],a:2},
+        {q:"Which loop iterates over a sequence?",o:["for","def","class","try"],a:0},
+        {q:"Which brackets create a list?",o:["{}","()","[]","<>"],a:2},
+        {q:"Which operator checks equality?",o:["=","==","!=","+"],a:1},
+        {q:"Which keyword imports a module?",o:["include","using","import","load"],a:2},
+        {q:"Which value represents True or False?",o:["int","bool","str","float"],a:1}
+    ],
+    database: [
+        {q:"Which SQL command retrieves data?",o:["SELECT","INSERT","UPDATE","DELETE"],a:0},
+        {q:"Which command adds a new row?",o:["SELECT","INSERT","DROP","ALTER"],a:1},
+        {q:"Which command modifies existing rows?",o:["UPDATE","CREATE","SELECT","DROP"],a:0},
+        {q:"Which command removes selected rows?",o:["ALTER","INSERT","DELETE","CREATE"],a:2},
+        {q:"Which key uniquely identifies a row?",o:["Foreign key","Primary key","Duplicate key","Sort key"],a:1},
+        {q:"Which clause filters rows?",o:["ORDER BY","WHERE","GROUP BY","FROM"],a:1},
+        {q:"Which command creates a table?",o:["MAKE TABLE","NEW TABLE","CREATE TABLE","ADD TABLE"],a:2},
+        {q:"Which clause sorts query results?",o:["WHERE","ORDER BY","VALUES","SET"],a:1},
+        {q:"What does DBMS stand for?",o:["Data Backup Main System","Database Management System","Digital Base Machine System","Database Memory Service"],a:1},
+        {q:"What links related tables?",o:["Foreign key","Paragraph","Loop","Function"],a:0}
+    ]
+};
+
+const course = courseData[courseKey];
+const validLesson = Boolean(
+    course &&
+    Number.isInteger(lessonIndex) &&
+    lessonIndex >= 0 &&
+    lessonIndex < course.lessons.length
+);
+
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+let quizPassed = false;
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const resultEl = document.getElementById("quizResult");
+const quizButton = document.getElementById("quizButton");
+const completeButton = document.getElementById("completeButton");
+const nextLessonBtn = document.getElementById("nextLessonBtn");
+const certificateBtn = document.getElementById("certificateBtn");
+const completionMessage = document.getElementById("completionMessage");
+
+function getCompletedLessons() {
+    try {
+        return JSON.parse(
+            localStorage.getItem("completedLessons_" + courseKey) || "[]"
+        );
+    } catch (error) {
+        return [];
+    }
+}
+
+function updateLessonProgress() {
+    const completedLessons = getCompletedLessons();
+    const totalLessons = course ? course.lessons.length : 6;
+    const percentage = Math.round(
+        completedLessons.length / totalLessons * 100
+    );
+
+    document.getElementById("progressFill").style.width = percentage + "%";
+    document.getElementById("progressText").textContent =
+        percentage + "% Complete";
+    document.getElementById("lessonCount").textContent =
+        completedLessons.length + " of " + totalLessons +
+        " lessons completed";
+}
+
+function renderQuestion() {
+    const item = quizData[courseKey][currentQuestion];
+
+    questionEl.textContent =
+        "Question " + (currentQuestion + 1) + " of 10: " + item.q;
+
+    optionsEl.innerHTML = "";
+
+    item.o.forEach(function(option, index) {
+        const label = document.createElement("label");
+        label.className = "answer-option";
+
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "answer";
+        radio.value = index;
+
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode(" " + option));
+        optionsEl.appendChild(label);
+    });
+
+    resultEl.textContent = "";
+    answered = false;
+    quizButton.textContent = "Submit Answer";
+    quizButton.onclick = checkAnswer;
+    quizButton.style.display = "inline-block";
+}
+
+function checkAnswer() {
+    if (!validLesson || answered) return;
+
+    const selected = document.querySelector(
+        'input[name="answer"]:checked'
+    );
+
+    if (!selected) {
+        resultEl.textContent = "Please select an answer.";
+        return;
+    }
+
+    answered = true;
+
+    const item = quizData[courseKey][currentQuestion];
+    const correct = Number(selected.value) === item.a;
+
+    if (correct) score++;
+
+    resultEl.textContent = correct
+        ? "Correct answer!"
+        : "Incorrect. Correct answer: " + item.o[item.a];
+
+    optionsEl.querySelectorAll('input[name="answer"]').forEach(function(input) {
+        input.disabled = true;
+    });
+
+    if (currentQuestion < 9) {
+        quizButton.textContent = "Next Question";
+        quizButton.onclick = nextQuestion;
+    } else {
+        quizButton.textContent = "View Result";
+        quizButton.onclick = showResult;
+    }
+}
+
+function nextQuestion() {
+    if (!answered) return;
+
+    currentQuestion++;
+    renderQuestion();
+}
+
+function showResult() {
+    if (!answered) return;
+
+    quizPassed = score >= 7;
+    completeButton.disabled = !quizPassed;
+
+    questionEl.textContent = "Quiz Completed!";
+    optionsEl.innerHTML = "";
+
+    resultEl.textContent = "Your score: " + score + "/10. " +
+        (quizPassed
+            ? "Congratulations! You passed the quiz."
+            : "You need 7/10 to pass. Please try again.");
+
+    quizButton.style.display = "none";
+
+    if (!quizPassed) {
+        const retryButton = document.createElement("button");
+        retryButton.className = "quiz-button";
+        retryButton.textContent = "Try Again";
+        retryButton.onclick = resetQuiz;
+        optionsEl.appendChild(retryButton);
+    }
+}
+
+function resetQuiz() {
+    currentQuestion = 0;
+    score = 0;
+    quizPassed = false;
+    completeButton.disabled = true;
+    nextLessonBtn.style.display = "none";
+    certificateBtn.style.display = "none";
+    renderQuestion();
+}
+
+function markComplete() {
+    if (!validLesson) return;
+
+    if (!quizPassed) {
+        completionMessage.textContent =
+            "Please score at least 7/10 to complete this lesson.";
+        return;
+    }
+
+    const completedLessons = getCompletedLessons();
+
+    if (!completedLessons.includes(lessonIndex)) {
+        completedLessons.push(lessonIndex);
+        localStorage.setItem(
+            "completedLessons_" + courseKey,
+            JSON.stringify(completedLessons)
+        );
+    }
+
+    completionMessage.textContent = "Lesson marked as complete!";
+    completeButton.disabled = true;
+
+    updateLessonProgress();
+
+    if (lessonIndex < course.lessons.length - 1) {
+        nextLessonBtn.style.display = "inline-block";
+        certificateBtn.style.display = "none";
+    } else {
+        nextLessonBtn.style.display = "none";
+
+        if (completedLessons.length >= course.lessons.length) {
+            certificateBtn.style.display = "inline-block";
+        } else {
+            completionMessage.textContent =
+                "Final lesson completed! Complete any remaining lessons to get your certificate.";
+        }
+    }
+}
+
+function goToNextLesson() {
+    if (validLesson && lessonIndex < course.lessons.length - 1) {
+        window.location.href =
+            "lesson.html?course=" + encodeURIComponent(courseKey) +
+            "&lesson=" + (lessonIndex + 1);
+    }
+}
+
+function goToCertificate() {
+    window.location.href =
+        "certificate.html?course=" + encodeURIComponent(courseKey);
+}
+
+if (!validLesson) {
+    document.getElementById("lessonTitle").textContent = "Lesson Not Found";
+    document.getElementById("lessonDescription").textContent =
+        "Please return to Popular Courses and select a lesson.";
+
+    document.querySelectorAll(".lesson-section, #completeButton, #nextLessonBtn, #certificateBtn")
+        .forEach(function(element) {
+            element.style.display = "none";
+        });
+} else {
+    const title = course.lessons[lessonIndex];
+
+    document.title = title;
+    document.getElementById("lessonTitle").textContent = title;
+    document.getElementById("lessonDescription").textContent =
+        "Course: " + course.title;
+
+    document.getElementById("backLink").href =
+        "course-details.html?course=" + encodeURIComponent(courseKey);
+
+    document.getElementById("videoLink").href =
+        "https://www.youtube.com/results?search_query=" +
+        encodeURIComponent(course.title + " " + title + " tutorial");
+
+    document.getElementById("lessonNotes").textContent =
+        "Study the main concepts of " + title +
+        ". Watch the tutorial and practise the examples.";
+
+    renderQuestion();
+    updateLessonProgress();
+}
+</script>
+
+</body>
+</html>

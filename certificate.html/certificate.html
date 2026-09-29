@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Course Certificate</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .certificate {
+            background: white;
+            border: 8px double #1f4e79;
+            padding: 40px 20px;
+            max-width: 750px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #1f4e79;
+            font-size: 36px;
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #1f4e79;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #certificateResult {
+            display: none;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .form-box, .no-print { display: none !important; }
+            #certificateResult { display: block !important; }
+            .certificate { margin: 20px auto; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-box">
+    <h2>Generate Course Certificate</h2>
+
+    <input type="text" id="studentName"
+           placeholder="Enter Student Name" required>
+    <br>
+
+    <input type="text" id="courseName"
+           placeholder="Enter Course Name" required>
+    <br>
+
+    <button type="button" onclick="generateCertificate()">
+        Generate Certificate
+    </button>
+</div>
+
+<div id="certificateResult">
+    <div class="certificate">
+        <h1>Certificate of Completion</h1>
+        <p>This certificate is proudly presented to</p>
+
+        <h2 id="displayName"></h2>
+
+        <p>for successfully completing the course</p>
+        <h2 id="displayCourse"></h2>
+
+        <p>Completion Date: <span id="displayDate"></span></p>
+
+        <br><br>
+        <p>Online Course Management System</p>
+        <p>________________________</p>
+        <p>Authorized Signature</p>
+    </div>
+
+    <br>
+    <div class="no-print">
+        <button onclick="window.print()">Print / Save as PDF</button>
+    </div>
+</div>
+
+<script>
+function generateCertificate() {
+    const name = document.getElementById("studentName").value.trim();
+    const course = document.getElementById("courseName").value.trim();
+
+    if (name === "" || course === "") {
+        alert("Please enter student name and course name.");
+        return;
+    }
+
+    document.getElementById("displayName").textContent = name;
+    document.getElementById("displayCourse").textContent = course;
+    document.getElementById("displayDate").textContent =
+        new Date().toLocaleDateString();
+
+    document.getElementById("certificateResult").style.display = "block";
+}
+</script>
+
+</body>
+</html>

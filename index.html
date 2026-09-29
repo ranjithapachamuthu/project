@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Online Course Management System</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <h2>Online Course</h2>
+
+        <div>
+            <a href="index.html">Home</a>
+            <a href="courses.html">Courses</a>
+            <a href="login.html">Login</a>
+            <a href="register.html">Register</a>
+        </div>
+
+        <!-- Course Search Bar -->
+        <form class="nav-search" onsubmit="searchCourses(event)">
+            <input
+                type="text"
+                id="courseSearch"
+                placeholder="Search your course..."
+            >
+            <button type="submit">Search</button>
+        </form>
+    </nav>
+
+    <!-- Welcome Section -->
+    <section class="hero">
+        <h1>Online Course Management System</h1>
+
+        <h2>Learn. Grow. Succeed.</h2>
+
+        <p>
+            Learn new skills, explore courses and manage
+            your learning online.
+        </p>
+
+        <a href="/login.html">
+            <button type="button">Student Login</button>
+        </a>
+
+        <a href="/register.html">
+            <button type="button">Student Registration</button>
+        </a>
+
+        <a href="/admin.html">
+            <button type="button">Admin Login</button>
+        </a>
+    </section>
+
+
+    <!-- Popular Courses -->
+    <section class="courses">
+        <h2>Popular Courses</h2>
+
+        <div class="course-container">
+
+            <!-- Web Development -->
+            <div class="course-card">
+                <h3>Web Development</h3>
+                <p>Learn HTML, CSS and JavaScript.</p>
+
+                <button type="button"
+                    onclick="window.location.href='/course-details.html?course=web'">View Course</button>
+                    <a href="/lesson.html?course=web&lesson=0" class="btn">Start Learning</a>
+            </div>
+
+            <!-- Python Programming -->
+            <div class="course-card">
+                <h3>Python Programming</h3>
+                <p>Learn Python programming from basics.</p>
+
+                <button type="button"
+                    onclick="window.location.href='/course-details.html?course=python'">View Course</button>
+                    <a href="/lesson.html?course=python&lesson=0" class="btn">Starting Learning</a>
+            </div>
+
+            <!-- Database Management -->
+            <div class="course-card">
+                <h3>Database Management</h3>
+                <p>Learn SQL and database concepts.</p>
+
+                <button type="button"
+                    onclick="window.location.href='/course-details.html?course=database'">View Course</button>
+                    <a href="/lesson.html?course=database&lesson=0" class="btn">Start Learning</a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Course Details -->
+    <section id="course-details"
+        class="course-card"
+        style="display:none; max-width:600px; margin:30px auto;">
+
+        <h2 id="course-title"></h2>
+
+        <p id="course-description"></p>
+
+        <p id="course-duration"></p>
+
+        <p id="course-level"></p>
+
+        <h3>Topics Covered</h3>
+        <p id="course-topics"></p>
+
+        <h3>What You Will Learn</h3>
+        <p id="course-learn"></p>
+
+        <button type="button" onclick="enrollSelectedCourse()">
+            Enroll Now
+        </button>
+
+        <button type="button" onclick="closeCourse()">
+            Close
+        </button>
+
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Online Course Management System</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        let selectedCourse = "";
+        function searchCourses(event) {
+    event.preventDefault();
+
+    const searchText = document
+        .getElementById("courseSearch")
+        .value.trim().toLowerCase();
+
+    const courseCards = document.querySelectorAll(
+        ".course-container .course-card"
+    );
+
+    let found = false;
+
+    courseCards.forEach(function(card) {
+        const courseName = card
+            .querySelector("h3")
+            .textContent.toLowerCase();
+
+        if (courseName.includes(searchText)) {
+            card.style.display = "block";
+            found = true;
+        } else {
+            card.style.display = "none";
+        }
+    });
+
+    document.querySelector(".courses").scrollIntoView({
+        behavior: "smooth"
+    });
+
+    if (!found) {
+        alert("No matching course found!");
+    }
+}
+
+        const courseDetails = {
+            web: {
+                title: "Web Development",
+                description:
+                    "Learn to create responsive and interactive websites.",
+                duration: "Duration: 6 Months",
+                level: "Level: Beginner",
+                topics:
+                    "HTML, CSS, JavaScript and Website Design",
+                learn:
+                    "You will learn to create web pages, design layouts, " +
+                    "style websites and add interactive features."
+            },
+
+            python: {
+                title: "Python Programming",
+                description:
+                    "Learn Python programming from the basics.",
+                duration: "Duration: 3 Months",
+                level: "Level: Beginner",
+                topics:
+                    "Variables, Data Types, Loops, Functions and Lists",
+                learn:
+                    "You will learn Python syntax, basic programming, " +
+                    "problem solving and simple projects."
+            },
+
+            database: {
+                title: "Database Management",
+                description:
+                    "Learn how to store and manage data using databases.",
+                duration: "Duration: 3 Month",
+                level: "Level: Beginner",
+                topics:
+                    "SQL, MySQL, Tables, Queries and Joins",
+                learn:
+                    "You will learn to create tables, manage records " +
+                    "and retrieve information using SQL."
+            }
+        };
+
+        function showCourse(course) {
+            const selected = courseDetails[course];
+
+            if (!selected) {
+                alert("Course details not found.");
+                return;
+            }
+
+            selectedCourse = course;
+
+            document.getElementById("course-title").textContent =
+                selected.title;
+
+            document.getElementById("course-description").textContent =
+                selected.description;
+
+            document.getElementById("course-duration").textContent =
+                selected.duration;
+
+            document.getElementById("course-level").textContent =
+                selected.level;
+
+            document.getElementById("course-topics").textContent =
+                selected.topics;
+
+            document.getElementById("course-learn").textContent =
+                selected.learn;
+
+            document.getElementById("course-details").style.display =
+                "block";
+
+            document.getElementById("course-details").scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+
+        function closeCourse() {
+            document.getElementById("course-details").style.display =
+                "none";
+
+            selectedCourse = "";
+        }
+
+        function enrollSelectedCourse() {
+    if (!selectedCourse) {
+        alert("Please select a course first.");
+        return;
+    }
+
+    const courseIds = {
+        web: 2,
+        python: 1,
+        database: 3
+    };
+
+    const studentId = prompt("Enter your Student ID:");
+
+    if (!studentId || !studentId.trim()) {
+        alert("Please enter your Student ID.");
+        return;
+    }
+
+    const courseId = courseIds[selectedCourse];
+
+    fetch("/enroll", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            studentId: studentId.trim(),
+            courseId: courseId
+        })
+    })
+    .then(response => response.text())
+    .then(message => {
+        alert(message);
+
+        if (message === "Course enrollment successful!") {
+            window.location.href = "/courses.html";
+        }
+    })
+    .catch(error => {
+        alert("Enrollment failed. Please try again.");
+        console.error(error);
+    });
+}
+    </script>
+
+</body>
+</html>

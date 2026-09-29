@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Details</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="register-box" style="width:95%; max-width:none; min-height:auto; box-sizing:border-box; margin:10px auto; padding:20px;"></div>
+        <h1 id="courseTitle">Course Details</h1>
+
+        <p id="courseDescription"></p>
+        <p id="instructor"></p>
+        <p id="duration"></p>
+
+        <h2>Course Lessons</h2>
+        <div id="lessons"></div>
+
+        <br>
+        <button id="enrollBtn" onclick="enrollCourse()">
+            Enroll Now
+        </button>
+
+        <br><br>
+        <a href="index.html">Back to Home</a>
+    </div>
+
+    <script>
+        const courses = {
+            web: {
+                title: "Web Development",
+                description: "Learn to create websites using HTML, CSS and JavaScript.",
+                instructor: "Web Development Instructor",
+                duration: "4 Weeks",
+                lessons: [
+                    "HTML - Introduction and Basic Tags",
+                    "HTML - Forms and Tables",
+                    "CSS - Colors, Fonts and Styling",
+                    "CSS - Layout and Responsive Design",
+                    "JavaScript - Variables and Data Types",
+                    "JavaScript - Functions and Events"
+                ]
+            },
+
+            python: {
+                title: "Python Programming",
+                description: "Learn Python programming from the basics.",
+                instructor: "Python Instructor",
+                duration: "4 Weeks",
+                lessons: [
+                    "Introduction to Python",
+                    "Variables and Data Types",
+                    "Conditional Statements",
+                    "Loops",
+                    "Functions",
+                    "Mini Project"
+                ]
+            },
+
+            
+            database: {
+    title: "Database Management",
+    description: "Learn SQL, database design and MySQL fundamentals.",
+    instructor: "Database Management Instructor",
+    duration: "4 Weeks",
+    lessons: [
+        "Introduction to Databases",
+        "Database Tables and Relationships",
+        "SQL SELECT, INSERT, UPDATE and DELETE",
+        "SQL WHERE and ORDER BY",
+        "Primary Key and Foreign Key",
+        "Mini Project using MySQL"
+    ]
+}
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const courseKey = params.get("course");
+        const course = courses[courseKey];
+
+        if (course) {
+            document.getElementById("courseTitle").textContent =
+                course.title;
+
+            document.getElementById("courseDescription").textContent =
+                course.description;
+
+            document.getElementById("instructor").textContent =
+                "Instructor: " + course.instructor;
+
+            document.getElementById("duration").textContent =
+                "Duration: " + course.duration;
+
+                const lessonsBox = document.getElementById("lessons");
+
+lessonsBox.style.display = "grid";
+lessonsBox.style.gridTemplateColumns =
+    "repeat(2, minmax(0, 1fr))";
+lessonsBox.style.gap = "16px";
+lessonsBox.style.width = "100%";
+lessonsBox.style.boxSizing = "border-box";
+document.getElementById("lessons").innerHTML =
+    course.lessons.map((lesson, index) => `
+        <a href="/lesson.html?course=${encodeURIComponent(courseKey)}&lesson=${index}"
+           style="display:block; text-decoration:none; color:#222;
+                  background:#fff; padding:16px; margin:0; min-height:90px;
+                  border-radius:12px; border:1px solid #d9e2ec;
+                  box-shadow:0 3px 8px rgba(0,0,0,0.08);">
+
+            <div style="display:flex; align-items:center; gap:15px;">
+                <div style="background:#e3efff; color:#1769aa;
+                            padding:12px; border-radius:8px;
+                            font-weight:bold;">
+                    ${index + 1}
+                </div>
+
+                <div style="flex:1;">
+                    <h3 style="margin:0 0 6px 0;">${lesson}</h3>
+                    <p style="margin:0; color:#666; font-size:14px;">
+                        Watch video and take quiz
+                    </p>
+                </div>
+
+                <span style="font-size:24px;">›</span>
+            </div>
+        </a>
+    `).join("");
+            
+        } else {
+            document.getElementById("courseTitle").textContent =
+                "Course Not Found";
+
+            document.getElementById("courseDescription").textContent =
+                "Please go back and select a course.";
+            document.getElementById("lessons").innerHTML = "";
+            document.getElementById("enrollBtn").style.display = "none";
+        }
+
+        function enrollCourse() {
+            if (!course) return;
+
+            window.location.href =
+                "/enroll?course=" + encodeURIComponent(course.title);
+        }
+    </script>
+
+</body>
+</html>

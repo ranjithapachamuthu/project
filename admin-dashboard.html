@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="register-box">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome, Admin!</p>
+        <hr>
+
+<h2>Add New Student</h2>
+
+<form action="/add-student" method="POST">
+
+    <label>Student Name</label>
+    <input type="text" name="name" placeholder="Enter student name" required>
+
+    <label>Email</label>
+    <input type="email" name="email" placeholder="Enter email" required>
+
+    <label>Mobile Number</label>
+    <input type="text" name="mobile" placeholder="Enter mobile number" required>
+
+    <label>Password</label>
+    <input type="password" name="password" placeholder="Enter password" required>
+
+    <button type="submit">Add Student</button>
+
+</form>
+
+<br>
+
+<a href="/view-students.html">View / Edit / Delete Students</a>
+
+        <h3>Manage Online Courses</h3>
+
+        <p><a href="add-course.html">Add New Course</a></p>
+        <p><a href="view-courses.html">View All Courses</a></p>
+        <p><a href="view-students.html">View Students</a></p>
+        <p><a href="view-enrollments.html">View Enrollments</a></p>
+
+        <br>
+        <a href="/index.html">Logout</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Registration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="register-box">
+        <h1>Student Registration</h1>
+
+        <form action="/register"
+        method="POST">
+            <label>Full Name</label>
+            <input type="text" name="name" placeholder="Enter your name">
+
+            <label>Email</label>
+            <input type="email" name="email" placeholder="Enter your email">
+
+            <label>Mobile Number</label>
+            <input type="tel" name="mobile" placeholder="Enter your mobile number">
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter password">
+
+            <label>Confirm Password</label>
+            <input type="password" name="confirmpassword" placeholder="Confirm password">
+
+            <button type="submit">Register</button>
+        </form>
+
+        <p>Already have an account? <a href="Login.html">login</a></p>
+    </div>
+<script>
+    const form = document.querySelector("form");
+
+    form.addEventListener("submit", function(event) {
+ const password = document.querySelector('input[name="password"]').value.trim();
+const confirmPassword = document.querySelector('input[name="confirmpassword"]').value.trim();  
+i
+        if (password.length === 0 || confirmPassword.length === 0 || password !== confirmPassword) {
+            event.preventDefault();
+            alert("Password do not match");
+        }
+    });
+</script>
+</body>
+</html>

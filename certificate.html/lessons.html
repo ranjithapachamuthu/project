@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Course Lessons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f5fa;
+            padding: 25px;
+            color: #193451;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: auto;
+        }
+
+        .lesson, .progress-box {
+            background: white;
+            padding: 18px;
+            margin: 15px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #0001;
+        }
+
+        h1 { text-align: center; }
+
+        progress {
+            width: 100%;
+            height: 22px;
+        }
+
+        button {
+            background: #193451;
+            color: white;
+            border: 0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        #certificateBtn {
+            display: none;
+            background: #16804a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Course Lessons</h1>
+    <p>Complete all lessons to unlock your certificate.</p>
+
+    <div class="progress-box">
+        <b>Course Progress: <span id="percent">0</span>%</b>
+        <progress id="progress" value="0" max="100"></progress>
+        <p id="count">0 of 4 lessons completed</p>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 1: Introduction</h3>
+        <p>Learn the basics and introduction to the course.</p>
+        <label><input type="checkbox" class="lessonCheck"> Mark as Completed</label>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 2: Basic Concepts</h3>
+        <p>Understand the important basic concepts.</p>
+        <label><input type="checkbox" class="lessonCheck"> Mark as Completed</label>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 3: Practical Learning</h3>
+        <p>Learn how to apply the concepts practically.</p>
+        <label><input type="checkbox" class="lessonCheck"> Mark as Completed</label>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 4: Final Review</h3>
+        <p>Review the topics covered in this course.</p>
+        <label><input type="checkbox" class="lessonCheck"> Mark as Completed</label>
+    </div>
+
+    <div style="text-align:center; margin-top:25px;">
+        <button id="certificateBtn"
+            onclick="window.location.href='certificate.html'">
+            Get Certificate
+        </button>
+    </div>
+</div>
+
+<script>
+const checks = document.querySelectorAll(".lessonCheck");
+
+function updateProgress() {
+    const completed = document.querySelectorAll(
+        ".lessonCheck:checked"
+    ).length;
+
+    const total = checks.length;
+    const percent = Math.round((completed / total) * 100);
+
+    document.getElementById("percent").textContent = percent;
+    document.getElementById("progress").value = percent;
+    document.getElementById("count").textContent =
+        completed + " of " + total + " lessons completed";
+
+    document.getElementById("certificateBtn").style.display =
+        completed === total ? "inline-block" : "none";
+}
+
+checks.forEach(check => {
+    check.addEventListener("change", updateProgress);
+});
+</script>
+
+</body>
+</html>

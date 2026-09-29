@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Courses</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Available Courses</h1>
+        <p>Choose a course and start learning.</p>
+
+        <div id="courseList">Loading courses...</div>
+    </div>
+
+    <script>
+        async function loadCourses() {
+            const courseList = document.getElementById("courseList");
+
+            try {
+                const response = await fetch("/api/courses");
+
+                if (!response.ok) {
+                    throw new Error("Could not load courses");
+                }
+
+                const courses = await response.json();
+
+                if (courses.length === 0) {
+                    courseList.innerHTML = "<p>No courses available yet.</p>";
+                    return;
+                }
+
+                courseList.innerHTML = courses.map(course => `
+                    <div class="course-card">
+                        <h2>${course.course_name}</h2>
+                        <p>Instructor: ${course.instructor}</p>
+                        <p>Price: ₹${course.price}</p>
+                        <button onclick="enrollCourse(${course.id})">
+                            Enroll Now
+                        </button>
+                    </div>
+                `).join("");
+
+            } catch (error) {
+                courseList.innerHTML =
+                    "<p>Unable to load courses. Please check the server.</p>";
+                console.error(error);
+            }
+        }
+
+async function enrollCourse(courseId) {
+    const studentId = localStorage.getItem("studentId");
+
+    if (!studentId) {
+        alert("Please login first!");
+        window.location.href = "/Login.html";
+        return;
+    }
+
+    try {
+        const response = await fetch("/enroll", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                studentId: Number(studentId),
+                courseId: Number(courseId)
+            })
+        });
+
+        const result = await response.text();
+        alert(result);
+
+    } catch (error) {
+        alert("Enrollment failed. Please try again.");
+        console.error(error);
+    }
+}
+        loadCourses();
+    </script>
+
+</body>
+</html>
